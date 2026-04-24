@@ -1,0 +1,40 @@
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+
+const api = axios.create({ baseURL: API_URL });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth
+export const login = (data) => api.post('/auth/login', data);
+export const register = (data) => api.post('/auth/register', data);
+
+// Generic CRUD
+export const getAll = (resource) => api.get(`/${resource}`);
+export const getOne = (resource, id) => api.get(`/${resource}/${id}`);
+export const create = (resource, data) => api.post(`/${resource}`, data);
+export const update = (resource, id, data) => api.put(`/${resource}/${id}`, data);
+export const remove = (resource, id) => api.delete(`/${resource}/${id}`);
+
+// AI Analysis
+export const analyzeAI = (type, data) => api.post(`/ai/analyze/${type}`, data);
+export const aiSearch = (data) => api.post('/ai/search', data);
+
+export default api;
