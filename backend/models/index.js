@@ -1,5 +1,7 @@
 const sequelize = require('../config/database');
 const User = require('./User');
+const AiResult = require('./AiResult');
+const Watchlist = require('./Watchlist');
 const FoiaRequest = require('./FoiaRequest');
 const TitleSearch = require('./TitleSearch');
 const RegulatoryFiling = require('./RegulatoryFiling');
@@ -17,6 +19,8 @@ const GovernmentContract = require('./GovernmentContract');
 module.exports = {
   sequelize,
   User,
+  AiResult,
+  Watchlist,
   FoiaRequest,
   TitleSearch,
   RegulatoryFiling,

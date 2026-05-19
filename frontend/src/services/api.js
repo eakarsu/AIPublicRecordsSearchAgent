@@ -26,8 +26,8 @@ api.interceptors.response.use(
 export const login = (data) => api.post('/auth/login', data);
 export const register = (data) => api.post('/auth/register', data);
 
-// Generic CRUD
-export const getAll = (resource) => api.get(`/${resource}`);
+// Generic CRUD with pagination + search + sort
+export const getAll = (resource, params = {}) => api.get(`/${resource}`, { params });
 export const getOne = (resource, id) => api.get(`/${resource}/${id}`);
 export const create = (resource, data) => api.post(`/${resource}`, data);
 export const update = (resource, id, data) => api.put(`/${resource}/${id}`, data);
@@ -36,5 +36,14 @@ export const remove = (resource, id) => api.delete(`/${resource}/${id}`);
 // AI Analysis
 export const analyzeAI = (type, data) => api.post(`/ai/analyze/${type}`, data);
 export const aiSearch = (data) => api.post('/ai/search', data);
+export const agentSearch = (data) => api.post('/ai/agent-search', data);
+export const generateFOIALetter = (data) => api.post('/ai/foia-letter', data);
+export const entityLink = (data) => api.post('/ai/entity-link', data);
+
+// Watchlists
+export const getWatchlists = (params = {}) => api.get('/watchlists', { params });
+export const createWatchlist = (data) => api.post('/watchlists', data);
+export const deleteWatchlist = (id) => api.delete(`/watchlists/${id}`);
+export const checkWatchlist = (id) => api.post(`/watchlists/${id}/check`);
 
 export default api;

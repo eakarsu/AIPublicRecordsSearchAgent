@@ -29,6 +29,29 @@ export default function Layout({ user, onLogout, children }) {
             Overview
           </button>
 
+          <div className="sidebar-section-title">AI Tools</div>
+          <button className={`nav-item ${isActive('/agent-search') ? 'active' : ''}`} onClick={() => navigate('/agent-search')}>
+            <div className="nav-icon">🤖</div> Agent Search
+          </button>
+          <button className={`nav-item ${isActive('/foia-letter') ? 'active' : ''}`} onClick={() => navigate('/foia-letter')}>
+            <div className="nav-icon">📝</div> FOIA Letter Generator
+          </button>
+          <button className={`nav-item ${isActive('/entity-link') ? 'active' : ''}`} onClick={() => navigate('/entity-link')}>
+            <div className="nav-icon">🔗</div> Entity Linker
+          </button>
+          <button className={`nav-item ${isActive('/watchlists') ? 'active' : ''}`} onClick={() => navigate('/watchlists')}>
+            <div className="nav-icon">👁️</div> Watchlists
+          </button>
+          <button className={`nav-item ${isActive('/timeline-reconstruction') ? 'active' : ''}`} onClick={() => navigate('/timeline-reconstruction')}>
+            <div className="nav-icon">📅</div> Timeline Reconstruction
+          </button>
+          <button className={`nav-item ${isActive('/contradiction-detection') ? 'active' : ''}`} onClick={() => navigate('/contradiction-detection')}>
+            <div className="nav-icon">⚠️</div> Contradiction Detection
+          </button>
+          <button className={`nav-item ${isActive('/custom-views') ? 'active' : ''}`} onClick={() => navigate('/custom-views')}>
+            <div className="nav-icon">📈</div> Records Views
+          </button>
+
           <div className="sidebar-section-title">Record Categories</div>
           {features.map(f => (
             <button

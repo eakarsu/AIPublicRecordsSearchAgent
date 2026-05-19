@@ -1,17 +1,49 @@
 const express = require('express');
+const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
 const models = require('../models');
 const router = express.Router();
 
-// Generic CRUD factory
+// Generic CRUD factory with pagination, search, sort
 function createCrudRoutes(modelName, Model) {
   const path = `/${modelName.toLowerCase()}`;
 
-  // Get all
+  // Get all - with pagination, search, sort
   router.get(path, auth, async (req, res) => {
     try {
-      const items = await Model.findAll({ order: [['createdAt', 'DESC']] });
-      res.json(items);
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.min(100, parseInt(req.query.limit) || 20);
+      const offset = (page - 1) * limit;
+      const search = req.query.search || '';
+      const sortField = req.query.sort || 'createdAt';
+      const sortDir = req.query.dir === 'asc' ? 'ASC' : 'DESC';
+
+      let where = {};
+      if (search) {
+        // Full-text search across all string fields
+        const stringFields = Object.entries(Model.rawAttributes)
+          .filter(([, attr]) => attr.type && attr.type.key === 'STRING' || attr.type?.key === 'TEXT')
+          .map(([k]) => k);
+        if (stringFields.length > 0) {
+          where = {
+            [Op.or]: stringFields.map(f => ({
+              [f]: { [Op.iLike]: `%${search}%` },
+            })),
+          };
+        }
+      }
+
+      const { count, rows } = await Model.findAndCountAll({
+        where,
+        order: [[sortField, sortDir]],
+        limit,
+        offset,
+      });
+
+      res.json({
+        data: rows,
+        pagination: { page, limit, total: count, totalPages: Math.ceil(count / limit) },
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
