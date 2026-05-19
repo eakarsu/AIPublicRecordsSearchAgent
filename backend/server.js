@@ -23,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api', crudRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/watchlists', watchlistRoutes);
+app.use('/api/custom-views', require('./routes/customViews'));
 
 // Health check
 app.get('/api/health', (req, res) => {

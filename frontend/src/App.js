@@ -10,6 +10,7 @@ import EntityLinkPage from './pages/EntityLinkPage';
 import WatchlistsPage from './pages/WatchlistsPage';
 import TimelineReconstructionPage from './pages/TimelineReconstructionPage';
 import ContradictionDetectionPage from './pages/ContradictionDetectionPage';
+import CustomViewsPage from './pages/CustomViewsPage';
 import Layout from './components/Layout';
 import Toast from './components/Toast';
 
@@ -81,6 +82,7 @@ function App() {
           <Route path="/watchlists" element={<WatchlistsPage showToast={showToast} />} />
           <Route path="/timeline-reconstruction" element={<TimelineReconstructionPage showToast={showToast} />} />
           <Route path="/contradiction-detection" element={<ContradictionDetectionPage showToast={showToast} />} />
+          <Route path="/custom-views" element={<CustomViewsPage showToast={showToast} />} />
           <Route path="/feature/:featureId" element={<FeaturePage showToast={showToast} />} />
           <Route path="/feature/:featureId/:id" element={<DetailPage showToast={showToast} />} />
           <Route path="*" element={<Navigate to="/" />} />

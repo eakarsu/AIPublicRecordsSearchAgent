@@ -48,6 +48,9 @@ export default function Layout({ user, onLogout, children }) {
           <button className={`nav-item ${isActive('/contradiction-detection') ? 'active' : ''}`} onClick={() => navigate('/contradiction-detection')}>
             <div className="nav-icon">⚠️</div> Contradiction Detection
           </button>
+          <button className={`nav-item ${isActive('/custom-views') ? 'active' : ''}`} onClick={() => navigate('/custom-views')}>
+            <div className="nav-icon">📈</div> Records Views
+          </button>
 
           <div className="sidebar-section-title">Record Categories</div>
           {features.map(f => (
