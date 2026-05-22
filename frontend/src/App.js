@@ -37,6 +37,11 @@ import GapNoFileUploadRouteForUsersuppliedPdfs from './pages/GapNoFileUploadRout
 
 import './styles/App.css';
 
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
+
 function App() {
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState(null);
@@ -75,6 +80,10 @@ function App() {
     <Router>
       <Layout user={user} onLogout={handleLogout}>
         <Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
           <Route path="/" element={<Dashboard showToast={showToast} />} />
           <Route path="/agent-search" element={<AgentSearchPage showToast={showToast} />} />
           <Route path="/foia-letter" element={<FOIALetterPage showToast={showToast} />} />

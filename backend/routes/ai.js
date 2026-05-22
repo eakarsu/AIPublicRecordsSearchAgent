@@ -23,7 +23,7 @@ function parseAIJson(text) {
 
 // Shared OpenRouter caller
 async function callOpenRouter(prompt, systemPrompt) {
-  const model = 'anthropic/claude-3-5-sonnet-20241022';
+  const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
