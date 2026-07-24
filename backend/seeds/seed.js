@@ -2,6 +2,12 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const { sequelize, User, FoiaRequest, TitleSearch, RegulatoryFiling, CourtRecord, PropertyRecord, BusinessFiling, BuildingPermit, VitalRecord, TaxLien, EnvironmentalRecord, CampaignFinance, ProfessionalLicense, GovernmentContract } = require('../models');
 
+function requireDemoPassword() {
+  const password = process.env.DEMO_PASSWORD || process.env.SEED_DEMO_PASSWORD || process.env.DEMO_SEED_PASSWORD || '';
+  if (password.length < 12 || password.length > 1024) throw new Error('DEMO_PASSWORD must contain 12-1024 characters');
+  return password;
+}
+
 async function seed() {
   try {
     await sequelize.authenticate();
@@ -11,9 +17,9 @@ async function seed() {
 
     // Users
     await User.bulkCreate([
-      { email: 'admin@publicrecords.gov', password: 'admin123', name: 'Sarah Mitchell', role: 'admin' },
-      { email: 'analyst@publicrecords.gov', password: 'analyst123', name: 'James Chen', role: 'analyst' },
-      { email: 'user@publicrecords.gov', password: 'user123', name: 'Maria Rodriguez', role: 'user' }
+      { email: 'admin@publicrecords.gov', password: requireDemoPassword(), name: 'Sarah Mitchell', role: 'admin' },
+      { email: 'analyst@publicrecords.gov', password: requireDemoPassword(), name: 'James Chen', role: 'analyst' },
+      { email: 'user@publicrecords.gov', password: requireDemoPassword(), name: 'Maria Rodriguez', role: 'user' }
     ], { individualHooks: true });
     console.log('Users seeded');
 

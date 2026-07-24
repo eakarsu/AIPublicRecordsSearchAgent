@@ -24,8 +24,8 @@ export default function Login({ onLogin, showToast }) {
   };
 
   const autoFill = () => {
-    setEmail('admin@publicrecords.gov');
-    setPassword('admin123');
+    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
+    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
   };
 
   return (
