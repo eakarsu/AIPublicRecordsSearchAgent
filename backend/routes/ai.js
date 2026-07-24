@@ -24,7 +24,7 @@ function parseAIJson(text) {
 // Shared OpenRouter caller
 async function callOpenRouter(prompt, systemPrompt) {
   const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetch(`${process.env.OPENROUTER_BASE_URL.replace(/\/+$/, '')}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -48,21 +48,18 @@ async function callOpenRouter(prompt, systemPrompt) {
   }
   const data = await response.json();
   if (data.error) throw new Error(data.error.message || 'OpenRouter API error');
+  if (!data.choices?.[0]?.message?.content?.trim()) throw new Error('OpenRouter returned no substantive content');
   return { choices: data.choices, model: data.model, usage: data.usage };
 }
 
 // Persist AI result
 async function persistResult(userId, endpoint, inputData, result) {
-  try {
-    await models.AiResult.create({
-      userId: userId || null,
-      endpoint,
-      inputData,
-      result: typeof result === 'string' ? result : JSON.stringify(result),
-    });
-  } catch (err) {
-    console.error('Failed to persist AI result:', err.message);
-  }
+  await models.AiResult.create({
+    userId: userId || null,
+    endpoint,
+    inputData,
+    result: typeof result === 'string' ? result : JSON.stringify(result),
+  });
 }
 
 // FOIA Request AI Analysis
@@ -472,6 +469,19 @@ Return JSON only:
     await persistResult(req.user?.id, 'contradiction-detection', { entityName: safeEntity, totalFound }, analysis);
     res.json({ analysis, totalFound, model: result.model });
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.get('/history', auth, async (req, res) => {
+  try {
+    const result = await models.AiResult.findAndCountAll({
+      where: { userId: req.user.id },
+      order: [['createdAt', 'DESC']],
+      limit: 25,
+    });
+    res.json({ total: result.count, data: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

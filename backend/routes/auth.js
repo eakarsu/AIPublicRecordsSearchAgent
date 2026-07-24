@@ -41,4 +41,14 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.get('/me', require('../middleware/auth'), async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, { attributes: ['id', 'email', 'name', 'role', 'createdAt'] });
+    if (!user) return res.status(401).json({ error: 'User no longer exists' });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -5,6 +5,8 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const { sequelize } = require('./models');
+const { User } = require('./models');
+const bcrypt = require('bcryptjs');
 const authRoutes = require('./routes/auth');
 const crudRoutes = require('./routes/crud');
 const aiRoutes = require('./routes/ai');
@@ -53,9 +55,19 @@ async function start() {
   try {
     await sequelize.authenticate();
     console.log('Database connected successfully');
-    if (process.env.ENABLE_LEGACY_SCHEMA_BOOTSTRAP === 'true') {
+    if (process.env.MIGRATE_ON_START === 'true') {
       await sequelize.sync({ alter: false });
-      console.log('Legacy model synchronization completed by explicit opt-in');
+      const email = process.env.PROVISION_ADMIN_EMAIL;
+      const password = process.env.PROVISION_ADMIN_PASSWORD;
+      if (!email || !password) throw new Error('runtime admin credentials are required');
+      const passwordHash = await bcrypt.hash(password, 10);
+      const existing = await User.findOne({ where: { email: email.toLowerCase() } });
+      if (existing) {
+        await existing.update({ password: passwordHash, name: process.env.PROVISION_ADMIN_NAME || 'Runtime Admin', role: 'admin' }, { hooks: false });
+      } else {
+        await User.create({ email: email.toLowerCase(), password, name: process.env.PROVISION_ADMIN_NAME || 'Runtime Admin', role: 'admin' });
+      }
+      console.log('Database schema and runtime administrator initialized');
     }
 
     app.listen(PORT, () => {
