@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { agentSearch } from '../services/api';
 import AIAnalysis from '../components/AIAnalysis';
+import FullFieldPresets from '../components/FullFieldPresets';
 
 export default function AgentSearchPage({ showToast }) {
   const [query, setQuery] = useState('');
@@ -35,6 +36,18 @@ export default function AgentSearchPage({ showToast }) {
           <p>Natural language search across all public record databases with AI synthesis</p>
         </div>
       </div>
+
+      <FullFieldPresets
+        value={{ query }}
+        choices={{
+          query: [
+            'Find all court cases involving Smith Construction',
+            'What government contracts does TechCorp hold?',
+            'List property and tax-lien records for Riverside Holdings LLC',
+          ],
+        }}
+        onChange={(next) => { if (next.query !== undefined) setQuery(next.query); }}
+      />
 
       <form onSubmit={handleSearch} style={{ marginBottom: 24 }}>
         <textarea

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import AIAnalysis from '../components/AIAnalysis';
+import FullFieldPresets from '../components/FullFieldPresets';
 
 export default function ContradictionDetectionPage({ showToast }) {
   const [entityName, setEntityName] = useState('');
@@ -45,6 +46,18 @@ export default function ContradictionDetectionPage({ showToast }) {
           <p>Surface conflicts across court, property, business, taxlien, license, contract, and regulatory records</p>
         </div>
       </div>
+
+      <FullFieldPresets
+        value={{ entityName, entityType }}
+        choices={{
+          entityName: ['John Smith', 'Acme Corporation', 'Riverside Holdings LLC'],
+          entityType: ['person', 'organization', 'property'],
+        }}
+        onChange={(next) => {
+          if (next.entityName !== undefined) setEntityName(next.entityName);
+          if (next.entityType !== undefined) setEntityType(next.entityType);
+        }}
+      />
 
       <form
         onSubmit={handleSubmit}
