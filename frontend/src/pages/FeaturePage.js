@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFeature } from '../components/featureConfig';
-import { getAll, create, remove } from '../services/api';
+import { getAll, create, update, remove } from '../services/api';
 import FormModal from '../components/FormModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -24,6 +24,8 @@ export default function FeaturePage({ showToast }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [editItem, setEditItem] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -68,12 +70,18 @@ export default function FeaturePage({ showToast }) {
 
   const handleCreate = async (data) => {
     try {
-      await create(featureId, data);
-      showToast('Record created successfully');
+      if (editItem) {
+        await update(featureId, editItem.id, data);
+        showToast('Record updated successfully');
+      } else {
+        await create(featureId, data);
+        showToast('Record created successfully');
+      }
       setShowModal(false);
+      setEditItem(null);
       loadItems(page, search);
     } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to create record', 'error');
+      showToast(err.response?.data?.error || 'Failed to save record', 'error');
     }
   };
 
@@ -158,7 +166,7 @@ export default function FeaturePage({ showToast }) {
             </thead>
             <tbody>
               {items.map(item => (
-                <tr key={item.id} onClick={() => navigate(`/feature/${featureId}/${item.id}`)}>
+                <tr key={item.id} onClick={() => setSelectedItem(item)} style={{ cursor: "pointer" }}>
                   {feature.columns.map(col => (
                     <td key={col}>
                       {getStatusColumn(col) ? (
@@ -194,8 +202,32 @@ export default function FeaturePage({ showToast }) {
         </div>
       )}
 
+      {selectedItem && (
+        <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
+          <div className="modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h2>{feature.icon} Record Details</h2>
+              <button type="button" onClick={() => setSelectedItem(null)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer" }}>&times;</button>
+            </div>
+            <div className="detail-grid" style={{ marginBottom: 20 }}>
+              {feature.fields.map(f => (
+                <div key={f.key} className="detail-field">
+                  <label>{f.label}</label>
+                  <div className="value">{formatValue(selectedItem[f.key])}</div>
+                </div>
+              ))}
+            </div>
+            <div className="modal-actions" style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button type="button" className="btn-edit" onClick={() => { setEditItem(selectedItem); setSelectedItem(null); setShowModal(true); }}>Edit</button>
+              <button type="button" className="btn-delete" onClick={() => { setDeleteTarget(selectedItem.id); setSelectedItem(null); }}>Delete</button>
+              <button type="button" className="btn-cancel" onClick={() => setSelectedItem(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showModal && (
-        <FormModal feature={feature} onSave={handleCreate} onClose={() => setShowModal(false)} />
+        <FormModal feature={feature} item={editItem} onSave={handleCreate} onClose={() => { setShowModal(false); setEditItem(null); }} />
       )}
 
       {deleteTarget && (

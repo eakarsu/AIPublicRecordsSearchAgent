@@ -36,6 +36,7 @@ app.use('/api', crudRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/watchlists', watchlistRoutes);
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api/tasks', require('./routes/featurePack43a'));
 app.use('/api/governed-record-answers', governanceRouter);
 
 // Health check

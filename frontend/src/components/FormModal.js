@@ -25,7 +25,7 @@ export default function FormModal({ feature, item, onSave, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
         <h2>{isEdit ? 'Edit' : 'New'} {feature.name.replace(/s$/, '')}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-grid">

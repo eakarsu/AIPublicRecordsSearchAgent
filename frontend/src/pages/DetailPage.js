@@ -143,6 +143,7 @@ export default function DetailPage({ showToast }) {
           <button className="btn-edit" onClick={() => setShowEdit(true)}>
             ✏️ Edit Record
           </button>
+          <button className="btn-cancel" onClick={() => navigate(`/feature/${featureId}`)}>Cancel</button>
           <button className="btn-delete" onClick={() => setShowDelete(true)}>
             🗑️ Delete Record
           </button>
